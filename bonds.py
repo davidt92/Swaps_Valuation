@@ -27,8 +27,6 @@ class bonds:
 
         for bond in self.bond_list:
 
-            print("Bond Price "+ str(bond.get_full_price()) + " *** ex-cupon" + str(bond.get_actual_price()) + " *** Maturity "+str(bond.get_maturity())+ " *** Cupon "+str(bond.get_cupon()))
-
             if bond.get_cupon() is None:
 
                 if bond.get_maturity_in_years() < 1:

@@ -17,7 +17,6 @@ WAIT_SECONDS = 120
 def bond_request_thread(country, results, position):
     bonds_in_country = investpy.bonds.get_bonds(country)["name"]
     bonds_list = []
-    print("Loading " + country + " bonds")
 
     for bond_name in bonds_in_country:
         bond_data = investpy.bonds.get_bond_information(bond_name)
