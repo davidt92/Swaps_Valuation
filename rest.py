@@ -39,6 +39,6 @@ def set_countries(cont):
     countries = cont
 
 def run_app():
-    app.run(host='0.0.0.0', port=80)
+    app.run(host='0.0.0.0', port=8080)
 
 threading.Thread(target=run_app).start()
