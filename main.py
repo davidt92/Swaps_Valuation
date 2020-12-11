@@ -6,8 +6,10 @@ import threading
 import concurrent.futures
 from threading import Thread
 from datetime import datetime, timedelta, date
+import time, threading
 
 
+WAIT_SECONDS = 120
 # pip install investpy
 # pip install matplotlib
 # pip install scipy
@@ -29,9 +31,10 @@ def bond_request_thread(country, results, position):
 
 
 def main():
-    print ("hola")
     bonds_dic = {}
     list_countries_with_bonds = investpy.bonds.get_bond_countries()
+    # list_countries_with_bonds = ["spain"] # only for testing purposes
+
     rest.set_countries(list_countries_with_bonds)
     i = 0
     threads = [None] * len(list_countries_with_bonds)
@@ -46,16 +49,20 @@ def main():
     for j in range(len(threads)):
         threads[j].join()
 
+    print("Received all Bonds")
+
     for i in range(len(results)):
-        bonds_dic[list_countries_with_bonds[i]] = bonds(results[i])
+        bonds_dic[list_countries_with_bonds[i]] = bonds(results[i], list_countries_with_bonds[i])
         bonds_dic[list_countries_with_bonds[i]].calculate_curve()
 
     flat_list = [item for sublist in results for item in sublist]
-    bonds_dic["world"] = bonds(flat_list)
+    bonds_dic["world"] = bonds(flat_list, "world")
     bonds_dic["world"].calculate_curve()
     rest.set_bonds_dic(bonds_dic)
-    print("APP STARTED")
+    threading.Timer(WAIT_SECONDS, main).start()
         #bonds_dic[country].plot_curve()
 
 if __name__ == "__main__":
+    print ("Starting Curve Program")
     main()
+    print("APP STARTED")

@@ -8,14 +8,19 @@ import matplotlib.image as mpimg
 import io
 from dateutil.relativedelta import relativedelta
 from scipy.interpolate import CubicSpline
+import numbers
+import pandas as pd
+import numpy as np
 
 class bonds:
-    def __init__(self, bond_list):
+    def __init__(self, bond_list, country):
         self.bond_list = bond_list
         self.bond_list.sort(key = lambda x : x.get_maturity_in_years(), reverse = False)
         self.interest_rate_list = []
+        self.country = country
 
     def calculate_curve(self):
+        self.start_time = datetime.now().strftime("%I:%M %p on %d - %B - %Y")
         # First, sort the bonds by maturity
         self.bond_list.sort(key = lambda x : x.get_maturity_in_years(), reverse = False)
         # Second apply boostrap method to calculate interest rates
@@ -55,11 +60,21 @@ class bonds:
 
 
     def interpolate(self):
+        self.interest_rate_list.sort(key = lambda x : utils.toTimestamp(x.maturity), reverse = False)
         interest = [element.interest for element in self.interest_rate_list]
         maturity = [utils.toTimestamp(element.maturity) for element in self.interest_rate_list]
+
+        new_interest=[]
+        new_maturity=[]
+
+        for int, mat in zip (interest, maturity):
+            if isinstance(int, numbers.Number) and isinstance(mat, numbers.Number):
+                if np.isfinite(int) and np.isfinite(mat) and not mat in new_maturity:
+                    new_interest.append(int)
+                    new_maturity.append(mat)
         #print(interest)
-        if len(interest) > 1:
-            self.interpolation = CubicSpline(maturity, interest)
+        if len(new_interest) > 1:
+            self.interpolation = CubicSpline(new_maturity, new_interest)
 
     def get_interest_rate(self, date):
         #print(date)
@@ -76,6 +91,7 @@ class bonds:
         #print(interest)
         plt.plot(maturity, interest)
         plt.show()
+        plt.title(self.start_time)
 
     #def curve_to_byte(self):
         # interest = [element.interest for element in self.interest_rate_list]
@@ -89,13 +105,14 @@ class bonds:
 
     def curve_to_byte(self, resolution=500):
         """Return filename of plot of the damped_vibration function."""
-        #interest = [element.interest for element in self.interest_rate_list]
-        maturity = [(element.maturity - datetime.combine(date.today(), datetime.min.time())).days / 365 for element in self.interest_rate_list]
+        # interest = [element.interest for element in self.interest_rate_list]
+        # maturity = [(element.maturity - datetime.combine(date.today(), datetime.min.time())).days / 365 for element in self.interest_rate_list]
 
         start = date.today()
-        end = date.today() + relativedelta(years=50)
+        self.interest_rate_list.sort(key = lambda x : utils.toTimestamp(x.maturity), reverse = False)
+        end = self.interest_rate_list[-1].maturity
         maturity = pd.date_range(start, end, 1000)
-        interest = get_interest_rate(maturity)
+        interest = list(map(lambda x:  self.get_interest_rate(x), maturity))
 
         bytes_image = None
 
@@ -103,6 +120,7 @@ class bonds:
         plt.plot(maturity, interest)
         plt.ylabel("Interest rate (Over unit)")
         plt.xlabel("Maturity in years")
+        plt.title("Country: "+str(self.country)+" Calibration time: "+ str(self.start_time))
 
         # Make Matplotlib write to BytesIO file object and grab
         # return the object's string
