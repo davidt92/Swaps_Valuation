@@ -32,7 +32,7 @@ def bond_request_thread(country, results, position):
 def main():
     bonds_dic = {}
     list_countries_with_bonds = investpy.bonds.get_bond_countries()
-    list_countries_with_bonds = ["germany"] # only for testing purposes
+    # list_countries_with_bonds = ["germany"] # only for testing purposes
 
     rest.set_countries(list_countries_with_bonds)
     i = 0
