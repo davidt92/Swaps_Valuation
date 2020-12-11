@@ -24,7 +24,7 @@ def bond_request_thread(country, results, position):
         #print(bond_data["Maturity Date"][0])
         #print(bond_data["Coupon"][0])
         if bond_data["Maturity Date"][0] is not None and bond_data["Price"][0] is not None and datetime.strptime(bond_data["Maturity Date"][0], '%d/%m/%Y').date() > date.today():
-            if 50 < bond_data["Price"][0] < 150:
+            if 50 < bond_data["Price"][0] and bond_data["Price"][0] < 150:
                 bonds_list.append(bond(bond_data["Price"][0], bond_data["Maturity Date"][0], bond_data["Coupon"][0]))
 
     results[position] = bonds_list
@@ -33,7 +33,7 @@ def bond_request_thread(country, results, position):
 def main():
     bonds_dic = {}
     list_countries_with_bonds = investpy.bonds.get_bond_countries()
-    # list_countries_with_bonds = ["spain"] # only for testing purposes
+    list_countries_with_bonds = ["germany"] # only for testing purposes
 
     rest.set_countries(list_countries_with_bonds)
     i = 0

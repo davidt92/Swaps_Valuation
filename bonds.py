@@ -27,7 +27,7 @@ class bonds:
 
         for bond in self.bond_list:
 
-            #print("Bond Maturity "+ str(bond.get_maturity().date()))
+            print("Bond Price "+ str(bond.get_full_price()) + " *** ex-cupon" + str(bond.get_actual_price()) + " *** Maturity "+str(bond.get_maturity())+ " *** Cupon "+str(bond.get_cupon()))
 
             if bond.get_cupon() is None:
 
@@ -120,7 +120,7 @@ class bonds:
         plt.plot(maturity, interest)
         plt.ylabel("Interest rate (Over unit)")
         plt.xlabel("Maturity in years")
-        plt.title("Country: "+str(self.country)+" Calibration time: "+ str(self.start_time))
+        plt.title("Country: "+str(self.country)+", Calibration time: "+ str(self.start_time))
 
         # Make Matplotlib write to BytesIO file object and grab
         # return the object's string
