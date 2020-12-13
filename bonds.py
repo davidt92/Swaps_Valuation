@@ -11,6 +11,8 @@ from scipy.interpolate import CubicSpline
 import numbers
 import pandas as pd
 import numpy as np
+from matplotlib.ticker import FormatStrFormatter
+
 
 class bonds:
     def __init__(self, bond_list, country):
@@ -102,7 +104,7 @@ class bonds:
         # return bytes_image
 
     def curve_to_byte(self, resolution=500):
-        """Return filename of plot of the damped_vibration function."""
+        # """Return filename of plot of the damped_vibration function."""
         # interest = [element.interest for element in self.interest_rate_list]
         # maturity = [(element.maturity - datetime.combine(date.today(), datetime.min.time())).days / 365 for element in self.interest_rate_list]
 
@@ -110,15 +112,18 @@ class bonds:
         self.interest_rate_list.sort(key = lambda x : utils.toTimestamp(x.maturity), reverse = False)
         end = self.interest_rate_list[-1].maturity
         maturity = pd.date_range(start, end, 1000)
-        interest = list(map(lambda x:  self.get_interest_rate(x), maturity))
+        interest = list(map(lambda x:  self.get_interest_rate(x) * 100, maturity))
+
+        mat = list(map(lambda x: (x - datetime.combine(date.today(), datetime.min.time())).days/365, maturity))
 
         bytes_image = None
 
         plt.clf()
-        plt.plot(maturity, interest)
-        plt.ylabel("Interest rate (Over unit)")
+        #plt.xaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+        plt.plot(mat, interest)
+        plt.ylabel("Interest rate (%)")
         plt.xlabel("Maturity in years")
-        plt.title("Country: "+str(self.country)+", Calibration time: "+ str(self.start_time))
+        plt.title("Country: "+str(self.country).capitalize() +", Calibration time: "+ str(self.start_time))
 
         # Make Matplotlib write to BytesIO file object and grab
         # return the object's string
