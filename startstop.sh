@@ -13,7 +13,7 @@
 
 #----BEGIN EDITABLE VARS----
 
-SCRIPT_TO_EXECUTE_PLUS_ARGS='main.py -m -r'
+SCRIPT_TO_EXECUTE_PLUS_ARGS='python3 main.py -m -r'
 
 OUTPUT_PID_FILE=running.pid
 
