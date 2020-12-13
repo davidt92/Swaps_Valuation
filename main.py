@@ -31,6 +31,7 @@ def bond_request_thread(country, results, position):
 
 def main():
     bonds_dic = {}
+    rest.set_bonds_dic(bonds_dic)
     list_countries_with_bonds = investpy.bonds.get_bond_countries()
     # list_countries_with_bonds = ["germany"] # only for testing purposes
 
@@ -57,7 +58,6 @@ def main():
     flat_list = [item for sublist in results for item in sublist]
     bonds_dic["world"] = bonds(flat_list, "world")
     bonds_dic["world"].calculate_curve()
-    rest.set_bonds_dic(bonds_dic)
     threading.Timer(WAIT_SECONDS, main).start()
         #bonds_dic[country].plot_curve()
 
