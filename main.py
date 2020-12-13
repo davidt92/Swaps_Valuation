@@ -34,7 +34,7 @@ def main():
     list_countries_with_bonds = investpy.bonds.get_bond_countries()
     # list_countries_with_bonds = ["germany"] # only for testing purposes
 
-    rest.set_countries(list_countries_with_bonds)
+    #rest.set_countries(list_countries_with_bonds)
     i = 0
     threads = [None] * len(list_countries_with_bonds)
     results = [None] * len(list_countries_with_bonds)
@@ -50,14 +50,18 @@ def main():
 
     print("Received all Bonds")
 
+    list_countries_with_bonds_updated = []
     for i in range(len(results)):
-        bonds_dic[list_countries_with_bonds[i]] = bonds(results[i], list_countries_with_bonds[i])
-        bonds_dic[list_countries_with_bonds[i]].calculate_curve()
+        if len(results[i]) != 0:
+            bonds_dic[list_countries_with_bonds[i]] = bonds(results[i], list_countries_with_bonds[i])
+            bonds_dic[list_countries_with_bonds[i]].calculate_curve()
+            list_countries_with_bonds_updated.append(list_countries_with_bonds[i])
 
+    rest.set_countries(list_countries_with_bonds_updated)
     flat_list = [item for sublist in results for item in sublist]
     bonds_dic["world"] = bonds(flat_list, "world")
     bonds_dic["world"].calculate_curve()
-    rest.set_bonds_dic(bonds_dic)
+
     threading.Timer(WAIT_SECONDS, main).start()
         #bonds_dic[country].plot_curve()
 
