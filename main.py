@@ -49,6 +49,7 @@ def main():
         threads[j].join()
 
     print("Received all Bonds")
+    rest.set_bonds_dic(bonds_dic)
 
     list_countries_with_bonds_updated = []
     for i in range(len(results)):
